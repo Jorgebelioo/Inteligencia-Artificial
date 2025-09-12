@@ -92,7 +92,10 @@ class PuzzleUI:
     def __init__(self, root, puzzleInicial):
         self.root = root
         self.root.title("Juego Puzzle 8")
-        self.puzzle = puzzleInicial
+        
+        # Guardamos el puzzle inicial original
+        self.puzzleInicialOriginal = [row.copy() for row in puzzleInicial]
+        self.puzzle = [row.copy() for row in puzzleInicial]
 
         self.frame = tk.Frame(root)
         self.frame.pack()
@@ -102,8 +105,12 @@ class PuzzleUI:
             for j in range(3):
                 self.labels[i][j].grid(row=i, column=j)
 
+        # Botones
         self.btn_solve = tk.Button(root, text="Resolver con A*", command=self.resolver)
-        self.btn_solve.pack(pady=10)
+        self.btn_solve.pack(pady=5)
+
+        self.btn_reset = tk.Button(root, text="Restablecer Puzzle", command=self.restablecer)
+        self.btn_reset.pack(pady=5)
 
         self.mostrarPuzzle()
 
@@ -129,8 +136,12 @@ class PuzzleUI:
         self.mostrarPuzzle()
         self.root.after(500, lambda: self.animar(pasos, idx+1))
 
+    def restablecer(self):
+        """Restablece el puzzle al estado inicial original"""
+        self.puzzle = [row.copy() for row in self.puzzleInicialOriginal]
+        self.mostrarPuzzle()
+
 # --- Ejecutar ---
 root = tk.Tk()
 app = PuzzleUI(root, puzzleInicial)
 root.mainloop()
-
