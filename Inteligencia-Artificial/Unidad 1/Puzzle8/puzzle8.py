@@ -91,7 +91,7 @@ def es_resolvible(puzzle):
 class PuzzleUI:
     def __init__(self, root, puzzleInicial):
         self.root = root
-        self.root.title("8 Puzzle Solver")
+        self.root.title("Juego Puzzle 8")
         self.puzzle = puzzleInicial
 
         self.frame = tk.Frame(root)
@@ -133,3 +133,4 @@ class PuzzleUI:
 root = tk.Tk()
 app = PuzzleUI(root, puzzleInicial)
 root.mainloop()
+
