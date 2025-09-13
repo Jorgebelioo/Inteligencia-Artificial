@@ -1,4 +1,3 @@
 Integrantes: 
-Lara Beltran Jorge Alberto
 -
-Pacheco Perez Diego
+Lara Beltran Jorge Alberto y Pacheco Perez Diego
