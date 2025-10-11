@@ -1,0 +1,11 @@
+pgmpy==0.1.22
+fastapi
+uvicorn[standard]
+pydantic
+streamlit
+pytest
+numpy
+pandas
+python-dotenv
+pyyaml
+pyswip 

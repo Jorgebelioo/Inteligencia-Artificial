@@ -1,0 +1,64 @@
+{
+  "ingredientes": [
+    {"nombre": "lechuga", "disponible": true},
+    {"nombre": "tomate", "disponible": true},
+    {"nombre": "pollo", "disponible": false},
+    {"nombre": "queso", "disponible": true},
+    {"nombre": "pasta", "disponible": true},
+    {"nombre": "aguacate", "disponible": true},
+    {"nombre": "tortilla", "disponible": true},
+    {"nombre": "carne", "disponible": true},
+    {"nombre": "salsa_picante", "disponible": true}
+  ],
+
+  "platos": [
+    {
+      "nombre": "Ensalada César",
+      "ingredientes": ["lechuga", "pollo", "queso"],
+      "categoria": "Saludable",
+      "restricciones_aplicables": ["Ninguna"]
+    },
+    {
+      "nombre": "Ensalada Vegana",
+      "ingredientes": ["lechuga", "tomate", "aguacate"],
+      "categoria": "Saludable",
+      "restricciones_aplicables": ["Vegetariana", "Vegana"]
+    },
+    {
+      "nombre": "Pasta Alfredo",
+      "ingredientes": ["pasta", "queso"],
+      "categoria": "Italiana",
+      "restricciones_aplicables": ["Vegetariana"]
+    },
+    {
+      "nombre": "Pasta con Pollo",
+      "ingredientes": ["pasta", "pollo"],
+      "categoria": "Italiana",
+      "restricciones_aplicables": ["Ninguna"]
+    },
+    {
+      "nombre": "Tacos Picantes",
+      "ingredientes": ["tortilla", "carne", "salsa_picante"],
+      "categoria": "Picante",
+      "restricciones_aplicables": ["Ninguna"]
+    },
+    {
+      "nombre": "Tacos Veganos",
+      "ingredientes": ["tortilla", "aguacate", "tomate"],
+      "categoria": "Picante",
+      "restricciones_aplicables": ["Vegetariana", "Vegana"]
+    }
+  ],
+
+  "restricciones_dieteticas": [
+    {"tipo": "Ninguna", "descripcion": "El cliente puede comer cualquier plato."},
+    {"tipo": "Vegetariana", "descripcion": "El cliente no consume carne, pero sí productos de origen animal como queso."},
+    {"tipo": "Vegana", "descripcion": "El cliente no consume productos de origen animal."}
+  ],
+
+  "preferencias_cliente": [
+    {"tipo": "Saludable", "descripcion": "Prefiere comidas ligeras y frescas."},
+    {"tipo": "Italiana", "descripcion": "Prefiere platos con pasta o sabores italianos."},
+    {"tipo": "Picante", "descripcion": "Prefiere comidas condimentadas o con chile."}
+  ]
+}
