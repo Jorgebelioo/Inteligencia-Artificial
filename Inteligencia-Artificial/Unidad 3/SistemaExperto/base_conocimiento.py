@@ -1,64 +1,35 @@
 # base_conocimiento.py
-# Base de conocimiento médica (enfermedades respiratorias)
 
+# Descripciones legibles de los síntomas
+descripciones = {
+    "tos": "tos",
+    "tos_productiva": "tos con flema",
+    "tos_nocturna_o_ejercicio": "tos nocturna o por ejercicio",
+    "dificultad_respiratoria": "dificultad para respirar",
+    "sibilancias": "sibilancias (silbido al respirar)",
+    "dolor_pecho": "dolor en el pecho",
+    "fiebre": "fiebre",
+    "anosmia": "pérdida del olfato",
+    "tabaquismo": "tabaquismo",
+    "antecedente_epoc": "antecedente de EPOC",
+    "antecedentes_alergia": "antecedente de alergias o asma",
+    "crepitantes": "crepitantes al auscultar los pulmones",
+    "disnea_cronica": "falta de aire prolongada",
+    "infeccion_respiratoria_previa": "infección respiratoria reciente",
+    "rx_consolidacion": "consolidación pulmonar en radiografía",
+    "duracion_sintomas_menor_3_semanas": "síntomas de corta duración (menos de 3 semanas)",
+    "fatiga": "fatiga o cansancio general",
+    "exposicion_contaminantes": "exposición a contaminantes"
+}
+
+# Base de conocimiento (reglas)
 reglas = [
-    {
-        "id": "R1",
-        "nombre": "Asma",
-        "condiciones": [
-            ("sibilancias", True),
-            ("tos_nocturna_o_ejercicio", True),
-            ("antecedentes_alergia", True)
-        ],
-        "diagnostico": "Asma",
-        "factor_certeza": 0.9
-    },
-    {
-        "id": "R2",
-        "nombre": "Neumonía",
-        "condiciones": [
-            ("fiebre", True),
-            ("tos_productiva", True),
-            ("dificultad_respiratoria", True),
-            ("crepitantes", True)
-        ],
-        "diagnostico": "Neumonía",
-        "factor_certeza": 0.85
-    },
-    {
-        "id": "R3",
-        "nombre": "Bronquitis aguda",
-        "condiciones": [
-            ("tos", True),
-            ("duracion_sintomas_menor_3_semanas", True),
-            ("infeccion_respiratoria_previa", True),
-            ("rx_consolidacion", False)
-        ],
-        "diagnostico": "Bronquitis aguda",
-        "factor_certeza": 0.75
-    },
-    {
-        "id": "R4",
-        "nombre": "EPOC",
-        "condiciones": [
-            ("antecedente_epoc", True),
-            ("tabaquismo", True),
-            ("disnea_cronica", True),
-            ("saturacion_baja", True)
-        ],
-        "diagnostico": "EPOC (Exacerbación)",
-        "factor_certeza": 0.8
-    },
-    {
-        "id": "R5",
-        "nombre": "COVID-19",
-        "condiciones": [
-            ("fiebre", True),
-            ("tos", True),
-            ("anosmia", True),
-            ("fatiga", True)
-        ],
-        "diagnostico": "COVID-19",
-        "factor_certeza": 0.9
-    }
+    (["tos", "tos_productiva", "duracion_sintomas_menor_3_semanas"], "bronquitis aguda"),
+    (["tos", "tos_productiva", "disnea_cronica", "tabaquismo"], "bronquitis crónica"),
+    (["tos_nocturna_o_ejercicio", "sibilancias", "antecedentes_alergia"], "asma"),
+    (["fiebre", "crepitantes", "rx_consolidacion", "edad"], "neumonía"),
+    (["disnea_cronica", "tabaquismo", "antecedente_epoc"], "EPOC"),
+    (["fiebre", "tos", "anosmia", "fatiga"], "COVID-19"),
+    (["dificultad_respiratoria", "saturacion_baja"], "insuficiencia respiratoria aguda"),
+    (["tos", "exposicion_contaminantes"], "irritación bronquial por contaminantes")
 ]
