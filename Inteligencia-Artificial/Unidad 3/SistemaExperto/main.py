@@ -1,8 +1,8 @@
 # main.py
-# Inicio del sistema
-
-from interfaz import iniciar_gui
+import tkinter as tk
+from interfaz import InterfazExperto
 
 if __name__ == "__main__":
-    iniciar_gui()
-
+    root = tk.Tk()
+    app = InterfazExperto(root)
+    root.mainloop()
