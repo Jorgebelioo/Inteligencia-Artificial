@@ -1,162 +1,129 @@
-# interfaz.py
-# Interfaz gráfica del sistema experto (actualizada: más campos y mejor distribución)
-
 import tkinter as tk
 from tkinter import ttk
 from motor_inferencia import MotorInferencia
+from base_conocimiento import descripciones
 
+# Recomendaciones solo para las enfermedades del conjunto de reglas
+recomendaciones = {
+    "bronquitis aguda": "Se sugiere hidratación, reposo y seguimiento médico si la tos persiste. Evitar humo y contaminantes.",
+    "bronquitis crónica": "Evitar exposición al humo de tabaco y contaminantes. Consultar con neumólogo para control prolongado.",
+    "asma": "Se recomienda realizar espirometría, usar broncodilatadores si es necesario y evitar alérgenos conocidos.",
+    "neumonía": "Requiere radiografía de tórax y evaluación médica inmediata. Puede requerir antibióticos o internación.",
+    "epoc": "Consultar con un neumólogo. Posible uso de broncodilatadores y control periódico de oxígeno.",
+    "covid-19": "Realizar prueba PCR o antígenos, aislamiento y monitoreo de saturación de oxígeno.",
+    "insuficiencia respiratoria aguda": "Acudir a urgencias inmediatamente. Requiere valoración médica y oxigenoterapia.",
+    "irritación bronquial por contaminantes": "Evitar exposición a contaminantes, mantener buena ventilación y reposo respiratorio.",
+}
 
-class InterfazGUI:
+class InterfazExperto:
     def __init__(self, master):
         self.master = master
-        master.title("Sistema Experto - Diagnóstico Respiratorio")
-        master.geometry("1000x820")  # más ancho para varias columnas
-        master.resizable(False, False)
+        self.master.title("Sistema Experto - Diagnóstico Respiratorio")
+        self.master.geometry("960x720")
+        self.master.configure(bg="#f4f4f4")
 
-        # --- Datos demográficos --- 
-        tk.Label(master, text="Datos del paciente:", font=("Arial", 12, "bold")).pack(pady=8)
-        frame_datos = tk.Frame(master)
+        # --- Sección de datos del paciente ---
+        tk.Label(master, text="Datos del paciente:", font=("Arial", 12, "bold"), bg="#f4f4f4").pack(pady=8)
+        frame_datos = tk.Frame(master, bg="#f4f4f4")
         frame_datos.pack(pady=4, fill="x", padx=12)
 
-        tk.Label(frame_datos, text="Edad:").grid(row=0, column=0, padx=5, pady=4, sticky="e")
+        tk.Label(frame_datos, text="Edad:", bg="#f4f4f4").grid(row=0, column=0, padx=5, pady=4, sticky="e")
         self.edad = tk.Entry(frame_datos, width=8)
         self.edad.grid(row=0, column=1, padx=5, pady=4, sticky="w")
 
-        tk.Label(frame_datos, text="Sexo:").grid(row=0, column=2, padx=5, pady=4, sticky="e")
+        tk.Label(frame_datos, text="Sexo:", bg="#f4f4f4").grid(row=0, column=2, padx=5, pady=4, sticky="e")
         self.sexo = ttk.Combobox(frame_datos, values=["", "Masculino", "Femenino"], width=12)
         self.sexo.grid(row=0, column=3, padx=5, pady=4, sticky="w")
 
-        tk.Label(frame_datos, text="Saturación O₂ (%):").grid(row=0, column=4, padx=5, pady=4, sticky="e")
+        tk.Label(frame_datos, text="Saturación O₂ (%):", bg="#f4f4f4").grid(row=0, column=4, padx=5, pady=4, sticky="e")
         self.saturacion = tk.Entry(frame_datos, width=8)
         self.saturacion.grid(row=0, column=5, padx=5, pady=4, sticky="w")
 
-        # --- Síntomas y signos (grid con varias columnas) ---
-        tk.Label(master, text="Seleccione los síntomas / signos / factores de riesgo presentes:",
-                 font=("Arial", 12, "bold")).pack(pady=8)
+        # --- Sección de síntomas ---
+        ttk.Label(master, text="Seleccione los síntomas observados:", font=("Arial", 14, "bold"), background="#f4f4f4").pack(pady=10)
+        frame_campos = ttk.Frame(master)
+        frame_campos.pack(pady=10)
 
-        frame_sintomas = ttk.Frame(master)
-        frame_sintomas.pack(padx=12, pady=4, fill="x")
-
-        # Lista ampliada de campos (incluye los nuevos que mencionaste)
-        self.campos = {
-            "tos": "Tos",
-            "tos_productiva": "Tos con flema",
-            "tos_nocturna_o_ejercicio": "Tos nocturna o por ejercicio",
-            "duracion_sintomas_menor_3_semanas": "Síntomas < 3 semanas",
-            "dificultad_respiratoria": "Dificultad para respirar",
-            "disnea_cronica": "Falta de aire prolongada",
-            "sibilancias": "Sibilancias (silbido al respirar)",
-            "crepitantes": "Crepitantes en auscultación",
-            "dolor_pecho": "Dolor en el pecho",
-            "fiebre": "Fiebre",
-            "fatiga": "Fatiga o cansancio",
-            "anosmia": "Pérdida del olfato",
-            "infeccion_respiratoria_previa": "Infección respiratoria previa",
-            "rx_consolidacion": "Consolidación pulmonar en Rx",
-            "tabaquismo": "Fumador (tabaquismo)",
-            "antecedente_epoc": "Antecedente de EPOC",
-            "antecedentes_alergia": "Alergias o asma previa",
-            "exposicion_contaminantes": "Exposición a contaminantes"
-        }
+        # Quitamos saturacion_baja del listado de selección manual
+        sintomas = [(k, v) for k, v in descripciones.items() if k != "saturacion_baja"]
 
         self.vars = {}
         columnas = 3
-        i = 0
-        for key, text in self.campos.items():
+        filas_por_columna = len(sintomas) // columnas + 1
+
+        for i, (clave, texto) in enumerate(sintomas):
+            col = i // filas_por_columna
+            row = i % filas_por_columna
             var = tk.BooleanVar()
-            chk = ttk.Checkbutton(frame_sintomas, text=text, variable=var)
-            # distribuir en grid
-            chk.grid(row=i // columnas, column=i % columnas, sticky="w", padx=18, pady=6)
-            self.vars[key] = var
-            i += 1
+            self.vars[clave] = var
+            ttk.Checkbutton(frame_campos, text=texto, variable=var).grid(row=row, column=col, sticky="w", padx=10, pady=3)
 
-        # --- Botones ---
-        frame_botones = tk.Frame(master)
-        frame_botones.pack(pady=12)
+        # Botones de acción
+        frame_botones = tk.Frame(master, bg="#f4f4f4")
+        frame_botones.pack(pady=10)
+        ttk.Button(frame_botones, text="Diagnosticar", command=self.diagnosticar).grid(row=0, column=0, padx=8)
+        ttk.Button(frame_botones, text="Ver explicación", command=self.mostrar_explicacion).grid(row=0, column=1, padx=8)
 
-        tk.Button(frame_botones, text="Evaluar diagnóstico",
-                  font=("Arial", 12, "bold"),
-                  bg="#0078D7", fg="white",
-                  command=self.ejecutar_sistema
-                  ).grid(row=0, column=0, padx=10)
+        # Resultado
+        self.resultado = tk.Text(master, wrap="word", width=110, height=14, font=("Arial", 12))
+        self.resultado.pack(pady=15)
 
-        tk.Button(frame_botones, text="Limpiar",
-                  font=("Arial", 11),
-                  command=self.resetear_formulario
-                  ).grid(row=0, column=1, padx=10)
+        self.motor = None
 
-        # --- Área de resultado (más grande) ---
-        tk.Label(master, text="Resultado del diagnóstico:", font=("Arial", 12, "bold")).pack(pady=6)
-        # Hacemos la caja más grande para que quepa toda la explicación
-        self.resultado = tk.Text(master, height=20, width=115, wrap="word", bg="#F8F8F8", font=("Arial", 10))
-        self.resultado.pack(padx=12, pady=6)
+    def diagnosticar(self):
+        hechos = [clave for clave, var in self.vars.items() if var.get()]
 
-        # etiqueta de nota/recomendación corta
-        self.nota = tk.Label(master, text="", font=("Arial", 10), fg="gray")
-        self.nota.pack(pady=4)
+        # --- Evaluación automática de edad y saturación ---
+        edad_texto = self.edad.get().strip()
+        sexo = self.sexo.get()
+        saturacion_texto = self.saturacion.get().strip()
 
-    def ejecutar_sistema(self):
-        # Recolectar datos desde los checkboxes
-        datos = {k: v.get() for k, v in self.vars.items()}
-
-        # Procesar saturación (saturacion_baja)
         try:
-            sat = float(self.saturacion.get())
-            datos["saturacion_baja"] = True if sat < 93 else False
-        except Exception:
-            datos["saturacion_baja"] = False
+            edad = int(edad_texto)
+            if edad >= 60:
+                hechos.append("edad")
+        except ValueError:
+            edad = None
 
-        # Edad avanzada si >= 65
         try:
-            edad_val = int(self.edad.get())
-            datos["edad"] = True if edad_val >= 65 else False
-        except Exception:
-            datos["edad"] = False
+            saturacion = float(saturacion_texto)
+            if saturacion < 93:
+                hechos.append("saturacion_baja")
+        except ValueError:
+            saturacion = None
 
-        # Sexo (normalizado)
-        sexo_val = self.sexo.get().strip()
-        datos["sexo"] = sexo_val.lower() if sexo_val else ""
+        self.motor = MotorInferencia(hechos)
+        resultados = self.motor.diagnosticar_con_probabilidad()
 
-        # Llamar al motor de inferencia
-        motor = MotorInferencia(datos)
-        diagnosticos = motor.evaluar()
+        resultados_filtrados = [(d, p) for d, p in resultados if p >= 50]
 
-        # Mostrar resultado
-        self.resultado.delete(1.0, tk.END)
-        self.nota.config(text="")
+        if not resultados_filtrados:
+            texto_diagnostico = "No se pudo determinar un diagnóstico con una certeza superior al 50%."
+        else:
+            texto_diagnostico = "Diagnóstico(s) presuntivo(s):\n\n"
+            for enfermedad, prob in resultados_filtrados:
+                recomendacion = recomendaciones.get(enfermedad.lower(), "Sin recomendación específica.")
+                texto_diagnostico += f"• {enfermedad} — Certeza: {prob:.1f}%\n"
+                texto_diagnostico += f"  ↳ Recomendación: {recomendacion}\n\n"
 
-        if not diagnosticos:
-            self.resultado.insert(tk.END, "❌ No se pudo determinar un diagnóstico con la información ingresada.\n")
-            self.resultado.insert(tk.END, "\nSugerencias:\n - Añade más signos/síntomas relevantes.\n - Completa edad y saturación si están disponibles.\n")
-            self.nota.config(text="El sistema necesita evidencia suficiente para sugerir un diagnóstico.")
+        texto_final = (
+            f"Sexo: {sexo or 'No especificado'} | "
+            f"Edad: {edad_texto or 'No especificada'} | "
+            f"Saturación: {saturacion_texto or 'No especificada'}\n\n"
+            f"{texto_diagnostico}"
+        )
+
+        self.resultado.delete("1.0", tk.END)
+        self.resultado.insert(tk.END, texto_final)
+
+    def mostrar_explicacion(self):
+        if not self.motor:
             return
-
-        # Imprimir diagnósticos (pueden ser varios)
-        for idx, diag in enumerate(diagnosticos, start=1):
-            evidencias_texto = ", ".join(diag["evidencias"]) if diag["evidencias"] else "No hay evidencias registradas"
-            self.resultado.insert(
-                tk.END,
-                f"{idx}. ✅ Diagnóstico sugerido: {diag['diagnostico']}\n"
-                f"    • Nivel de confianza: {diag['certeza']*100:.0f}%\n"
-                f"    • Evidencias clínicas: {evidencias_texto}.\n"
-                f"    • Recomendación: {diag.get('recomendacion', 'Consulte con un profesional de salud.')}\n\n"
-            )
-
-        self.nota.config(text=f"{len(diagnosticos)} diagnóstico(s) sugerido(s).")
-
-    def resetear_formulario(self):
-        # limpiar campos demográficos
-        self.edad.delete(0, tk.END)
-        self.sexo.set("")
-        self.saturacion.delete(0, tk.END)
-        # limpiar checkboxes
-        for var in self.vars.values():
-            var.set(False)
-        # limpiar resultado
-        self.resultado.delete(1.0, tk.END)
-        self.nota.config(text="")
-
-def iniciar_gui():
-    root = tk.Tk()
-    app = InterfazGUI(root)
-    root.mainloop()
+        texto = self.motor.explicacion.generar_explicacion()
+        ventana = tk.Toplevel(self.master)
+        ventana.title("Explicación del diagnóstico")
+        ventana.geometry("700x500")
+        text_area = tk.Text(ventana, wrap="word", font=("Arial", 11))
+        text_area.pack(fill="both", expand=True, padx=10, pady=10)
+        text_area.insert(tk.END, texto)
+        text_area.config(state="disabled")
