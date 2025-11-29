@@ -7,4 +7,5 @@
 <p> pip install opencv-python</p>
 <p> pip install tensorflow</p>
 <p> pip install numpy</p>
+<p> video demostracion: https://youtu.be/-U_Jocjuyq0</p>
 <br>
